@@ -1,8 +1,11 @@
 ---
 title: "Final Project"
 subtitle: "Data Science for Biologists, Spring 2021"
-author: "Your name goes here"
-output: html_document
+author: "Stephanie Sanders"
+output: 
+  html_document: 
+    theme: cerulean
+    highlight: kate
 editor_options: 
   chunk_output_type: console
 ---
@@ -12,23 +15,35 @@ editor_options:
 knitr::opts_chunk$set(warning=FALSE, message=FALSE, echo = TRUE, include = TRUE)
 
 # Load all libraries you use HERE:
+library(tidyverse)
 ```
 
 <br><br>
 
 ## Introduction
 
-```{r read-examine-data}
+This [data](https://github.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/blob/master/data/actor-metrics.csv) is all of the relevant information of the films nominated for Best Picture at the oscars in 1989, 2015, and 2017. The data will be used to analyze the progression of diversity in Best Picture-nominated films.
 
+```{r read-examine-data}
+oscars <- read_csv("actor-metrics.csv") #data from the 1989, 2015 and 2017 oscars
+dplyr::glimpse(oscars)
+
+oscars %>%
+  select(race) %>%
+  distinct() #show which races are represented in the data
 ```
 
 <br><br>
 
 ## Question 1
 
-#### REPLACE TEXT WITH YOUR QUESTION. Your question should literally be a level-4 header.
+#### Which film from each year had the highest percentage of actors that are people of color (POC)?
 
 ### Methods
+```{r condensed table}
+oscars %>%
+  select(-film, -actor, -characters, -imdb) -> oscars_condensed
+```
 
 ### Answer
 
@@ -39,7 +54,7 @@ Replace this text with your answer to your question.
 
 ## Question 2
 
-#### REPLACE TEXT WITH YOUR QUESTION. Your question should literally be a level-4 header.
+#### Over the three years provided, which race is the most represented in the Oscars? Which races is the least represented in the Oscars?
 
 ### Methods
 
@@ -51,7 +66,7 @@ Replace this text with your answer to your question.
 
 ## Question 3
 
-#### REPLACE TEXT WITH YOUR QUESTION. Your question should literally be a level-4 header.
+#### Over time, has there been an increase in the number of lines given to POC actors in Oscar-nominated films?
 
 ### Methods
 
@@ -64,7 +79,7 @@ Replace this text with your answer to your question.
 
 ## Question 4
 
-#### REPLACE TEXT WITH YOUR QUESTION. Your question should literally be a level-4 header.
+#### Which film from each year had the most even ratio of male to female actors? 
 
 ### Methods
 
