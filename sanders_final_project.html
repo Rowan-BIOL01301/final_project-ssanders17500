@@ -278,7 +278,7 @@ summary {
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>This <a href="https://github.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/blob/master/data/actor-metrics.csv">data</a> is all of the relevant information of the films nominated for Best Picture at the oscars in 1989, 2015, and 2017. The data will be used to analyze the progression of diversity in Best Picture-nominated films.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>oscars <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;actor-metrics.csv&quot;</span>) <span class="co">#data from the 1989, 2015 and 2017 oscars</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>oscars <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;sanders_actor-metrics.csv&quot;</span>) <span class="co">#data from the 1989, 2015 and 2017 oscars</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(oscars)</span></code></pre></div>
 <pre><code>## Rows: 265
 ## Columns: 10
@@ -292,15 +292,28 @@ summary {
 ## $ race_simple &lt;chr&gt; &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;White&quot;, &quot;Wh…
 ## $ words       &lt;dbl&gt; 216, 290, 104, 300, 217, 140, 188, 366, 161, 348, 189, 25…
 ## $ sentences   &lt;dbl&gt; 15, 40, 14, 35, 5, 22, 30, 34, 16, 45, 20, 48, 15, 18, 26…</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>oscars <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(race) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="co">#show which races are represented in the data</span></span></code></pre></div>
+<pre><code>## # A tibble: 5 x 1
+##   race                  
+##   &lt;chr&gt;                 
+## 1 White/Caucasian       
+## 2 Black/African American
+## 3 2+ Race               
+## 4 Asian                 
+## 5 Hispanic/Latino</code></pre>
 <p><br><br></p>
 </div>
 <div id="question-1" class="section level2">
 <h2>Question 1</h2>
-<div id="replace-text-with-your-question.-your-question-should-literally-be-a-level-4-header." class="section level4">
-<h4>REPLACE TEXT WITH YOUR QUESTION. Your question should literally be a level-4 header.</h4>
+<div id="which-film-from-each-year-had-the-highest-percentage-of-actors-that-are-people-of-color-poc" class="section level4">
+<h4>Which film from each year had the highest percentage of actors that are people of color (POC)?</h4>
 </div>
 <div id="methods" class="section level3">
 <h3>Methods</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>oscars <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>film, <span class="sc">-</span>actor, <span class="sc">-</span>characters, <span class="sc">-</span>imdb) <span class="ot">-&gt;</span> oscars_condensed</span></code></pre></div>
 </div>
 <div id="answer" class="section level3">
 <h3>Answer</h3>
@@ -310,8 +323,8 @@ summary {
 </div>
 <div id="question-2" class="section level2">
 <h2>Question 2</h2>
-<div id="replace-text-with-your-question.-your-question-should-literally-be-a-level-4-header.-1" class="section level4">
-<h4>REPLACE TEXT WITH YOUR QUESTION. Your question should literally be a level-4 header.</h4>
+<div id="over-the-three-years-provided-which-race-is-the-most-represented-in-the-oscars-which-races-is-the-least-represented-in-the-oscars" class="section level4">
+<h4>Over the three years provided, which race is the most represented in the Oscars? Which races is the least represented in the Oscars?</h4>
 </div>
 <div id="methods-1" class="section level3">
 <h3>Methods</h3>
@@ -324,8 +337,8 @@ summary {
 </div>
 <div id="question-3" class="section level2">
 <h2>Question 3</h2>
-<div id="replace-text-with-your-question.-your-question-should-literally-be-a-level-4-header.-2" class="section level4">
-<h4>REPLACE TEXT WITH YOUR QUESTION. Your question should literally be a level-4 header.</h4>
+<div id="over-time-has-there-been-an-increase-in-the-number-of-lines-given-to-poc-actors-in-oscar-nominated-films" class="section level4">
+<h4>Over time, has there been an increase in the number of lines given to POC actors in Oscar-nominated films?</h4>
 </div>
 <div id="methods-2" class="section level3">
 <h3>Methods</h3>
@@ -338,8 +351,8 @@ summary {
 </div>
 <div id="question-4" class="section level2">
 <h2>Question 4</h2>
-<div id="replace-text-with-your-question.-your-question-should-literally-be-a-level-4-header.-3" class="section level4">
-<h4>REPLACE TEXT WITH YOUR QUESTION. Your question should literally be a level-4 header.</h4>
+<div id="which-film-from-each-year-had-the-most-even-ratio-of-male-to-female-actors" class="section level4">
+<h4>Which film from each year had the most even ratio of male to female actors?</h4>
 </div>
 <div id="methods-3" class="section level3">
 <h3>Methods</h3>

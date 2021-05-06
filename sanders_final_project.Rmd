@@ -25,7 +25,7 @@ library(tidyverse)
 This [data](https://github.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/blob/master/data/actor-metrics.csv) is all of the relevant information of the films nominated for Best Picture at the oscars in 1989, 2015, and 2017. The data will be used to analyze the progression of diversity in Best Picture-nominated films.
 
 ```{r read-examine-data}
-oscars <- read_csv("actor-metrics.csv") #data from the 1989, 2015 and 2017 oscars
+oscars <- read_csv("sanders_actor-metrics.csv") #data from the 1989, 2015 and 2017 oscars
 dplyr::glimpse(oscars)
 
 oscars %>%
