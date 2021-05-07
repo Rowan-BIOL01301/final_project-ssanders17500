@@ -51,23 +51,23 @@ oscars_condensed %>%
   group_by(year, film) %>%
   filter(race_simple == "POC") %>%
   count() %>%
-  rename(number_poc = n) -> poc_by_film
+  rename(number_poc = n) -> poc_by_film #number of POC by film
 
 oscars_condensed %>%
   select(year, film, race_simple) %>%
   group_by(year, film) %>%
   count() %>%
-  rename(number_actors = n) -> actors_by_film
+  rename(number_actors = n) -> actors_by_film #number of actors by film
 
 full_join(poc_by_film, actors_by_film) %>%
-  mutate(percent_poc = number_poc/number_actors * 100) %>%
+  mutate(percent_poc = number_poc/number_actors * 100) %>% #percentage of POC by film
   arrange(desc(percent_poc)) %>%
   group_by(year) %>%
   slice(1) %>%
   ungroup() %>%
   transform(year = factor(year,
                               levels = c(1989, 2015, 2017),
-                              labels = c("1989", "2015", "2017"))) %>%
+                              labels = c("1989", "2015", "2017"))) %>% #change year values to strings for fill purposes on plot
   select(year, film, percent_poc) -> percent_poc_film
 ```
 
@@ -81,7 +81,7 @@ theme_set(theme_classic())
 
 percent_poc_film %>%
   ggplot() +
-  aes(x = fct_reorder(film_names, percent_poc), #order films by percentage
+  aes(x = fct_reorder(film_names, percent_poc, .desc = TRUE), #order films by percentage
       y = percent_poc,
       fill = year) +
   geom_col(color = "black") +
@@ -103,13 +103,46 @@ Based on the films with the highest percentage of POC actors from each year, the
 
 ## Question 2
 
-#### Over the three years provided, which race is the most represented in the Oscars? Which races is the least represented in the Oscars?
+#### Over the three years provided, which non-white race is the most represented in the Oscars? Which race is the least represented in the Oscars?
 
 ### Methods
+```{r q2 data wrangling}
+oscars_condensed %>%
+  count() -> total_actors
+
+sum(total_actors$n) -> total
+
+oscars_condensed %>%
+  select(race) %>%
+  group_by(race) %>%
+  filter(race != "White/Caucasian") %>% #remove White/Caucasian
+  count() %>%
+  rename(number_poc = n) %>%
+  mutate(percent_poc = number_poc / sum(total)*100) %>% #percent race representation
+  select(-number_poc) -> poc_overall
+
+```
+
+```{r q2 plot}
+poc_overall %>%
+  ggplot() +
+  aes(x = fct_reorder(race, percent_poc, .desc = TRUE), #order films by percentage
+      y = percent_poc,
+      fill = race) +
+  geom_col(color = "black") +
+  geom_text(aes(x = race,
+                y = percent_poc + 0.2,
+                label = round(percent_poc, digits = 2))) +
+  scale_fill_brewer(palette = "Set2") +
+  theme(legend.position = "none") +
+  labs(x = "Race",
+       y = "Percent Representation")
+  
+```
 
 ### Answer
 
-Replace this text with your answer to your question.
+African Americans are the most represented non-white race, making up 5.66% of all actors in Oscar-nominated films for these years. The least represented races are Asian and Hispanic/Latio, each making up 1.13% of of all actors in Oscar-nominated films for these years.
 
 <br><br>
 
