@@ -22,7 +22,7 @@ library(tidyverse)
 
 ## Introduction
 
-This [data](https://github.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/blob/master/data/actor-metrics.csv) is all of the relevant information of the films nominated for Best Picture at the oscars in 1989, 2015, and 2017. The data will be used to analyze the progression of diversity in Best Picture-nominated films.
+This [data](https://github.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/blob/master/data/actor-metrics.csv) is all of the relevant information of the films nominated for Best Picture at the Oscars in 1989, 2015, and 2017. The data will be used to analyze the progression of diversity in Best Picture-nominated films.
 
 ```{r read-examine-data}
 oscars <- read_csv("sanders_actor-metrics.csv") #data from the 1989, 2015 and 2017 oscars
@@ -37,17 +37,66 @@ oscars %>%
 
 ## Question 1
 
-#### Which film from each year had the highest percentage of actors that are people of color (POC)?
+#### Has there been an increase in the representation of people of color (POC) in Oscar-nominated films?
 
 ### Methods
 ```{r condensed table}
 oscars %>%
-  select(-film, -actor, -characters, -imdb) -> oscars_condensed
+  select(-actor, -characters, -imdb) -> oscars_condensed
+```
+
+```{r q1 data wrangling}
+oscars_condensed %>%
+  select(year, film, race_simple) %>%
+  group_by(year, film) %>%
+  filter(race_simple == "POC") %>%
+  count() %>%
+  rename(number_poc = n) -> poc_by_film
+
+oscars_condensed %>%
+  select(year, film, race_simple) %>%
+  group_by(year, film) %>%
+  count() %>%
+  rename(number_actors = n) -> actors_by_film
+
+full_join(poc_by_film, actors_by_film) %>%
+  mutate(percent_poc = number_poc/number_actors * 100) %>%
+  arrange(desc(percent_poc)) %>%
+  group_by(year) %>%
+  slice(1) %>%
+  ungroup() %>%
+  transform(year = factor(year,
+                              levels = c(1989, 2015, 2017),
+                              labels = c("1989", "2015", "2017"))) %>%
+  select(year, film, percent_poc) -> percent_poc_film
+```
+
+```{r q1 plot}
+eighty_nine <- "gray94"
+fifteen <- "coral3"
+seventeen <- "darkolivegreen3"
+yearfill <- c(eighty_nine, fifteen, seventeen) #fun fact, these are roughly the colors that were the most popular for each year
+film_names <- fct_relevel(c("'Driving Miss Daisy'", "'The Martian'", "'Get Out'")) #fix the titles of the movies
+theme_set(theme_classic())
+
+percent_poc_film %>%
+  ggplot() +
+  aes(x = fct_reorder(film_names, percent_poc), #order films by percentage
+      y = percent_poc,
+      fill = year) +
+  geom_col(color = "black") +
+  scale_fill_manual(values = yearfill, name = "Oscars Year") + #fill columns by year
+  geom_text(aes(x = film_names,
+                y = percent_poc + 1.1,
+                label = round(percent_poc, digits = 2))) +
+  labs(x = "Film",
+       y = "Percent POC")
+  
 ```
 
 ### Answer
 
-Replace this text with your answer to your question.
+Based on the films with the highest percentage of POC actors from each year, there has been an increase in POC representation. From 1989 to 2015, there was only a 2.38% increase in POC actors the between the most diverse films from each year. From 2015 to 2017, there was a 9.74% increase in POC actors the between the most diverse films from each year.
 
 
 <br><br>
