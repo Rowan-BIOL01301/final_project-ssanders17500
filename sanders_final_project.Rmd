@@ -115,7 +115,7 @@ sum(total_actors$n) -> total
 oscars_condensed %>%
   select(race) %>%
   group_by(race) %>%
-  filter(race != "White/Caucasian") %>% #remove White/Caucasian
+  filter(race != "White/Caucasian") %>% #remove "White/Caucasian"
   count() %>%
   rename(number_poc = n) %>%
   mutate(percent_poc = number_poc / sum(total)*100) %>% #percent race representation
@@ -131,7 +131,7 @@ poc_overall %>%
       fill = race) +
   geom_col(color = "black") +
   geom_text(aes(x = race,
-                y = percent_poc + 0.2,
+                y = percent_poc + 0.15,
                 label = round(percent_poc, digits = 2))) +
   scale_fill_brewer(palette = "Set2") +
   theme(legend.position = "none") +
@@ -148,20 +148,54 @@ African Americans are the most represented non-white race, making up 5.66% of al
 
 ## Question 3
 
-#### Over time, has there been an increase in the number of lines given to POC actors in Oscar-nominated films?
+#### Over time, has there been an increase in the number of sentences spoken by POC actors in Oscar-nominated films?
 
 ### Methods
+```{r q3 data wrangling}
+sum(oscars_condensed$sentences) -> total_sentences
+
+oscars_condensed %>%
+  select(year, race_simple, sentences) %>%
+  group_by(race_simple) %>%
+  filter(race_simple != "White") %>% #remove "White"
+  ungroup() %>%
+  group_by(year) %>%
+  summarize(poc_sentences_total = sum(sentences)) %>%
+  mutate(percent_poc_sentences = (poc_sentences_total/total_sentences)*100) %>% #percent lines each year
+  transform(year = factor(year,
+                              levels = c(1989, 2015, 2017),
+                              labels = c("1989", "2015", "2017"))) %>% #change year values to strings for fill purposes on plot
+  select(-poc_sentences_total) -> poc_sentences_by_year 
+
+```
+
+```{r q3 plot}
+poc_sentences_by_year %>%
+  ggplot() +
+  aes(x = fct_reorder(year, percent_poc_sentences, .desc = TRUE), #order years by percentage
+      y = percent_poc_sentences,
+      fill = year) +
+  geom_col(color = "black") +
+  geom_text(aes(x = year,
+                y = percent_poc_sentences + 0.1,
+                label = round(percent_poc_sentences, digits = 2))) +
+  scale_fill_manual(values = yearfill, name = "Oscars Year") + #fill columns by year
+  theme(legend.position = "none") +
+  labs(x = "Year",
+       y = "Percent Sentences Spoken by POC Actors")
+  
+```
 
 ### Answer
 
-Replace this text with your answer to your question.
+There does not appear to be an upward trend in the number of lines given to POC actors across the years in oscar nominated films. Of the Oscar-nominated films in 2017, POC actors had 3.87% of the lines. In 2015, only 2.25% of lines were given to POC actors and 2.91% of lines in 1989. Overally, all of these percentages are very low and seem to vary based on the specific films being nominated that year and not by any progression of diversity.
 
 
 <br><br>
 
 ## Question 4
 
-#### Which film from each year had the most even ratio of male to female actors? 
+#### Which year had the most even ratio of male to female actors in Oscar-nominated films? 
 
 ### Methods
 
