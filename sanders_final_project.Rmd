@@ -37,7 +37,7 @@ oscars %>%
 
 ## Question 1
 
-#### Has there been an increase in the representation of people of color (POC) in Oscar-nominated films?
+#### Has there been an increase in the representation of people of color (POC) in Oscar-nominated films for Best Picture?
 
 ### Methods
 ```{r condensed table}
@@ -96,14 +96,14 @@ percent_poc_film %>%
 
 ### Answer
 
-Based on the films with the highest percentage of POC actors from each year, there has been an increase in POC representation. From 1989 to 2015, there was only a 2.38% increase in POC actors the between the most diverse films from each year. From 2015 to 2017, there was a 9.74% increase in POC actors the between the most diverse films from each year.
+Based on the films with the highest percentage of POC actors from each year, there has been an increase in POC representation. From 1989 to 2015, there was only a 2.38% increase in POC actors the between the most diverse Best Picture-nominated films from each year. From 2015 to 2017, there was a 9.74% increase in POC actors the between the most diverse Best Picture-nominated films from each year.
 
 
 <br><br>
 
 ## Question 2
 
-#### Over the three years provided, which non-white race is the most represented in the Oscars? Which race is the least represented in the Oscars?
+#### Over the three years provided, which non-white race is the most represented in Oscar-nominated films for Best Picture? Which race is the least represented in Oscar-nominated films for Best Picture?
 
 ### Methods
 ```{r q2 data wrangling}
@@ -142,13 +142,13 @@ poc_overall %>%
 
 ### Answer
 
-African Americans are the most represented non-white race, making up 5.66% of all actors in Oscar-nominated films for these years. The least represented races are Asian and Hispanic/Latio, each making up 1.13% of of all actors in Oscar-nominated films for these years.
+African Americans are the most represented non-white race, making up 5.66% of all actors in Best Picture Oscar-nominated films for these years. The least represented races are Asian and Hispanic/Latio, each making up 1.13% of of all actors in Best Picture Oscar-nominated films for these years.
 
 <br><br>
 
 ## Question 3
 
-#### Over time, has there been an increase in the number of sentences spoken by POC actors in Oscar-nominated films?
+#### Over time, has there been an increase in the number of sentences spoken by POC actors in Oscar-nominated films for Best Picture?
 
 ### Methods
 ```{r q3 data wrangling}
@@ -172,7 +172,7 @@ oscars_condensed %>%
 ```{r q3 plot}
 poc_sentences_by_year %>%
   ggplot() +
-  aes(x = fct_reorder(year, percent_poc_sentences, .desc = TRUE), #order years by percentage
+  aes(x = year, #order years by percentage
       y = percent_poc_sentences,
       fill = year) +
   geom_col(color = "black") +
@@ -188,17 +188,46 @@ poc_sentences_by_year %>%
 
 ### Answer
 
-There does not appear to be an upward trend in the number of lines given to POC actors across the years in oscar nominated films. Of the Oscar-nominated films in 2017, POC actors had 3.87% of the lines. In 2015, only 2.25% of lines were given to POC actors and 2.91% of lines in 1989. Overally, all of these percentages are very low and seem to vary based on the specific films being nominated that year and not by any progression of diversity.
+There does not appear to be an upward trend in the number of lines given to POC actors across the years in Best Picture-nominated films. Of the Best Picture-nominated films in 2017, POC actors had 3.87% of the lines. In 2015, only 2.25% of lines were given to POC actors and 2.91% of lines in 1989. Overall, all of these percentages are very low and seem to vary based on the specific films being nominated that year and not by any progression of diversity.
 
 
 <br><br>
 
 ## Question 4
 
-#### Which year had the most even ratio of male to female actors in Oscar-nominated films? 
+#### Which year had the most even ratio of male to female actors in Oscar-nominated films for Best Picture? 
 
 ### Methods
+```{r q4 data wrangling}
+oscars_condensed %>%
+  select(year, gender) %>%
+  group_by(year, gender) %>%
+  tally %>%
+  mutate(ratio = n/sum(n)) %>%
+  transform(year = factor(year,
+                              levels = c(1989, 2015, 2017),
+                              labels = c("1989", "2015", "2017"))) %>% #change year values to strings for fill purposes on plot
+  select(-n) -> gender_by_year
+```
+
+```{r q4 plot}
+gender_by_year %>%
+  ggplot() +
+  aes(x = year,
+      y = ratio,
+      fill = gender) +
+  geom_bar(position = "stack", stat = "identity", color = "black") +
+  theme(legend.position = "bottom") +
+  scale_fill_brewer(palette = "Pastel1", name = "Gender") +
+  geom_text(aes(x = year,
+                y = ratio,
+                label = round(ratio, digits = 2)),
+            position = position_stack(vjust = 0.5)) +
+  labs(x = "Year",
+       y = "Gender Ratio")
+
+```
 
 ### Answer
 
-Replace this text with your answer to your question.
+Based off of the graph, 2015 had the most even male to female ratio at 66% men with 2017 close behind at 68% men. Between 1989 and 2015, there was a 10% decrease in the amount of male actors in Oscar-nominated films for Best Picture. The 2% increase in 2017 likely isn't significant, given how small this increase is.
